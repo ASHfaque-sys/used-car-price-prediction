@@ -1,0 +1,177 @@
+{
+  "dataset_rows": 6019,
+  "training_rows": 4815,
+  "testing_rows": 1204,
+  "target_unit": "INR lakh",
+  "best_model": "xgboost",
+  "metrics": {
+    "linear_regression": {
+      "MAE": 1.787,
+      "RMSE": 4.5307,
+      "R2": 0.8332,
+      "MAPE": 21.78
+    },
+    "random_forest": {
+      "MAE": 1.4975,
+      "RMSE": 3.7661,
+      "R2": 0.8847,
+      "MAPE": 18.28
+    },
+    "xgboost": {
+      "MAE": 1.2833,
+      "RMSE": 3.6962,
+      "R2": 0.889,
+      "MAPE": 16.62
+    }
+  },
+  "feature_importances": {
+    "random_forest": [
+      {
+        "feature": "Power",
+        "importance": 0.644
+      },
+      {
+        "feature": "Year",
+        "importance": 0.119
+      },
+      {
+        "feature": "Car_Age",
+        "importance": 0.0886
+      },
+      {
+        "feature": "Engine",
+        "importance": 0.0361
+      },
+      {
+        "feature": "Mileage",
+        "importance": 0.0118
+      },
+      {
+        "feature": "Kilometers_Driven",
+        "importance": 0.0117
+      },
+      {
+        "feature": "Power_per_CC",
+        "importance": 0.0095
+      },
+      {
+        "feature": "Km_per_Year",
+        "importance": 0.007
+      },
+      {
+        "feature": "Brand_Land",
+        "importance": 0.0064
+      },
+      {
+        "feature": "New_Price",
+        "importance": 0.0048
+      }
+    ],
+    "xgboost": [
+      {
+        "feature": "Power",
+        "importance": 0.2054
+      },
+      {
+        "feature": "Transmission_Automatic",
+        "importance": 0.1051
+      },
+      {
+        "feature": "Transmission_Manual",
+        "importance": 0.0901
+      },
+      {
+        "feature": "Engine",
+        "importance": 0.0573
+      },
+      {
+        "feature": "Car_Age",
+        "importance": 0.0551
+      },
+      {
+        "feature": "Year",
+        "importance": 0.055
+      },
+      {
+        "feature": "Brand_Land",
+        "importance": 0.0384
+      },
+      {
+        "feature": "Fuel_Type_Diesel",
+        "importance": 0.0321
+      },
+      {
+        "feature": "Brand_Mahindra",
+        "importance": 0.0272
+      },
+      {
+        "feature": "Brand_Mini",
+        "importance": 0.0265
+      }
+    ]
+  },
+  "options": {
+    "brands": [
+      "Ambassador",
+      "Audi",
+      "Bentley",
+      "Bmw",
+      "Chevrolet",
+      "Datsun",
+      "Fiat",
+      "Force",
+      "Ford",
+      "Honda",
+      "Hyundai",
+      "Isuzu",
+      "Jaguar",
+      "Jeep",
+      "Lamborghini",
+      "Land",
+      "Mahindra",
+      "Maruti",
+      "Mercedes-Benz",
+      "Mini",
+      "Mitsubishi",
+      "Nissan",
+      "Porsche",
+      "Renault",
+      "Skoda",
+      "Smart",
+      "Tata",
+      "Toyota",
+      "Volkswagen",
+      "Volvo"
+    ],
+    "locations": [
+      "Ahmedabad",
+      "Bangalore",
+      "Chennai",
+      "Coimbatore",
+      "Delhi",
+      "Hyderabad",
+      "Jaipur",
+      "Kochi",
+      "Kolkata",
+      "Mumbai",
+      "Pune"
+    ],
+    "fuel_types": [
+      "CNG",
+      "Diesel",
+      "Electric",
+      "LPG",
+      "Petrol"
+    ],
+    "transmissions": [
+      "Automatic",
+      "Manual"
+    ],
+    "owner_types": [
+      "First",
+      "Fourth & Above",
+      "Second",
+      "Third"
+    ]
+  }
+}

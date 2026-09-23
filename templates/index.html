@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CarWorth AI · Machine Learning Used Car Valuation Engine. Accurate price predictions with multi-model comparison.">
+  <title>CarWorth AI · Used Car Valuation Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="background-glows">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+    <div class="glow glow-3"></div>
+  </div>
+
+  <div class="page-shell">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11.2 2 11.6 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">CarWorth <span class="badge-ai">AI 2.0</span></span>
+          <span class="brand-sub">ML Valuation Engine</span>
+        </div>
+      </div>
+
+      <div class="header-stats">
+        <div class="stat-pill">
+          <span class="pulse-dot"></span>
+          <span>Engine Online</span>
+        </div>
+        <div class="stat-pill highlight">
+          <span class="stat-label">Trained On</span>
+          <strong id="dataset-rows-count">{{ "{:,}".format(metadata.dataset_rows) }}</strong>
+          <span class="stat-sub">Listings</span>
+        </div>
+        <div class="stat-pill best-model-pill">
+          <span class="stat-label">Top Model</span>
+          <strong>{{ metadata.best_model.replace('_', ' ').title() }}</strong>
+          <span class="score-chip">R² {{ "%.3f"|format(metadata.metrics[metadata.best_model].R2) }}</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-layout">
+      <!-- HERO BANNER -->
+      <section class="hero-section">
+        <div class="hero-content">
+          <div class="hero-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            PREDICTIVE RESALE INTELLIGENCE
+          </div>
+          <h1>Precision Price Valuation for <em>Used Vehicles.</em></h1>
+          <p>Instant market appraisal powered by Gradient Boosted XGBoost, Random Forest, and Linear Regression trained on historical Indian vehicle listings.</p>
+        </div>
+
+        <!-- QUICK PRESETS -->
+        <div class="presets-wrapper">
+          <span class="presets-title">Quick Sample Presets:</span>
+          <div class="presets-bar" id="presets-bar">
+            <button type="button" class="preset-chip" data-preset="creta_2020">
+              <span class="preset-name">2020 Hyundai Creta</span>
+              <span class="preset-tag">SUV</span>
+            </button>
+            <button type="button" class="preset-chip" data-preset="city_2018">
+              <span class="preset-name">2018 Honda City</span>
+              <span class="preset-tag">Sedan</span>
+            </button>
+            <button type="button" class="preset-chip" data-preset="swift_2017">
+              <span class="preset-name">2017 Maruti Swift</span>
+              <span class="preset-tag">Hatchback</span>
+            </button>
+            <button type="button" class="preset-chip" data-preset="bmw_3series_2019">
+              <span class="preset-name">2019 BMW 3 Series</span>
+              <span class="preset-tag">Luxury</span>
+            </button>
+            <button type="button" class="preset-chip" data-preset="mahindra_thar_2021">
+              <span class="preset-name">2021 Mahindra Thar</span>
+              <span class="preset-tag">Off-Road</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- WORKSPACE GRID -->
+      <div class="workspace-grid">
+        <!-- FORM CONTAINER -->
+        <div class="glass-card form-card">
+          <div class="card-header">
+            <div class="header-title-group">
+              <div class="step-badge">01</div>
+              <div>
+                <h2>Vehicle Configuration</h2>
+                <p>Configure parameters to generate valuation estimate</p>
+              </div>
+            </div>
+            <button type="button" class="btn-ghost" id="clear-form-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+              Reset
+            </button>
+          </div>
+
+          <form id="prediction-form">
+            <div class="form-grid">
+              <div class="field-group">
+                <label for="brand">Brand</label>
+                <div class="select-wrapper">
+                  <select id="brand" name="brand" required>
+                    <option value="" selected disabled>Select brand</option>
+                    {% for value in metadata.options.brands %}<option value="{{ value }}">{{ value }}</option>{% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="location">Registration City</label>
+                <div class="select-wrapper">
+                  <select id="location" name="location" required>
+                    <option value="" selected disabled>Select city</option>
+                    {% for value in metadata.options.locations %}<option value="{{ value }}">{{ value }}</option>{% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="year">Manufacturing Year</label>
+                <div class="input-wrapper">
+                  <input id="year" name="year" type="number" min="1990" max="2030" value="2018" required>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="kilometers_driven">Kilometres Driven</label>
+                <div class="input-wrapper unit-right">
+                  <input id="kilometers_driven" name="kilometers_driven" type="number" min="0" max="2000000" value="45000" required>
+                  <span class="unit">km</span>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="fuel_type">Fuel Type</label>
+                <div class="select-wrapper">
+                  <select id="fuel_type" name="fuel_type" required>
+                    {% for value in metadata.options.fuel_types %}<option value="{{ value }}">{{ value }}</option>{% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="transmission">Transmission</label>
+                <div class="select-wrapper">
+                  <select id="transmission" name="transmission" required>
+                    {% for value in metadata.options.transmissions %}<option value="{{ value }}">{{ value }}</option>{% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="owner_type">Owner History</label>
+                <div class="select-wrapper">
+                  <select id="owner_type" name="owner_type" required>
+                    {% for value in metadata.options.owner_types %}<option value="{{ value }}">{{ value }}</option>{% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="seats">Seating Capacity</label>
+                <div class="input-wrapper">
+                  <input id="seats" name="seats" type="number" min="1" max="20" value="5" required>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="mileage">Fuel Efficiency</label>
+                <div class="input-wrapper unit-right">
+                  <input id="mileage" name="mileage" type="number" step="0.01" min="0" max="100" value="18.5" required>
+                  <span class="unit">km/l</span>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="engine">Engine Displacement</label>
+                <div class="input-wrapper unit-right">
+                  <input id="engine" name="engine" type="number" step="1" min="100" max="10000" value="1498" required>
+                  <span class="unit">CC</span>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="power">Max Power Output</label>
+                <div class="input-wrapper unit-right">
+                  <input id="power" name="power" type="number" step="0.01" min="1" max="2000" value="118" required>
+                  <span class="unit">bhp</span>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="new_price">Original New Price <span class="tag-opt">OPTIONAL</span></label>
+                <div class="input-wrapper unit-right">
+                  <input id="new_price" name="new_price" type="number" step="0.01" min="0" max="1000" placeholder="e.g. 14.5">
+                  <span class="unit">lakh</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- MODEL SELECTION ROW -->
+            <div class="model-selection-row">
+              <label class="model-select-label">Select Model Algorithm</label>
+              <div class="segmented-control">
+                <input type="radio" id="model-best" name="model" value="{{ metadata.best_model }}" checked>
+                <label for="model-best" class="segment">
+                  <span>Best Model ({{ metadata.best_model.replace('_', ' ').title() }})</span>
+                  <span class="micro-badge">R² {{ "%.3f"|format(metadata.metrics[metadata.best_model].R2) }}</span>
+                </label>
+
+                {% for key in metadata.metrics %}
+                  {% if key != metadata.best_model %}
+                  <input type="radio" id="model-{{ key }}" name="model" value="{{ key }}">
+                  <label for="model-{{ key }}" class="segment">
+                    <span>{{ key.replace('_', ' ').title() }}</span>
+                    <span class="micro-badge">R² {{ "%.3f"|format(metadata.metrics[key].R2) }}</span>
+                  </label>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="action-buttons">
+              <button type="submit" class="btn-primary" id="submit-single-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>Calculate Resale Price</span>
+              </button>
+
+              <button type="button" class="btn-secondary" id="compare-all-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                <span>Compare All Models</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- RESULT & ANALYTICS CONTAINER -->
+        <div class="glass-card result-card">
+          <div class="tab-header">
+            <button type="button" class="tab-btn active" data-tab="tab-estimate">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              Single Estimate
+            </button>
+            <button type="button" class="tab-btn" data-tab="tab-compare">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              Multi-Model
+            </button>
+            <button type="button" class="tab-btn" data-tab="tab-analytics">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              Value Drivers
+            </button>
+          </div>
+
+          <div class="tab-content">
+            <!-- TAB 1: SINGLE ESTIMATE -->
+            <div class="tab-pane active" id="tab-estimate">
+              <div class="result-idle" id="result-idle">
+                <div class="radar-gauge">
+                  <div class="radar-ring ring-1"></div>
+                  <div class="radar-ring ring-2"></div>
+                  <div class="radar-core">₹</div>
+                </div>
+                <h3>Ready to Calculate</h3>
+                <p>Select a preset or fill in car details to generate an accurate ML valuation.</p>
+              </div>
+
+              <div class="result-display" id="result-output" hidden>
+                <div class="estimate-badge">MARKET VALUATION ESTIMATE</div>
+                <div class="price-hero" id="price-main">₹0.00 <small>lakh</small></div>
+
+                <div class="range-card">
+                  <div class="range-header">
+                    <span>Likely Price Range (±10%)</span>
+                    <strong id="price-range-text">₹0.00 – ₹0.00 L</strong>
+                  </div>
+                  <div class="range-bar-container">
+                    <div class="range-bar-fill" id="range-bar-fill"></div>
+                  </div>
+                </div>
+
+                <div class="meta-details-list">
+                  <div class="meta-row">
+                    <span>Model Engine</span>
+                    <strong id="used-model-name">-</strong>
+                  </div>
+                  <div class="meta-row">
+                    <span>Model Accuracy ($R^2$)</span>
+                    <strong id="used-model-r2">-</strong>
+                  </div>
+                  <div class="meta-row">
+                    <span>Estimated Depreciation</span>
+                    <strong id="est-depreciation">-</strong>
+                  </div>
+                </div>
+
+                <p class="confidence-text" id="result-confidence-text"></p>
+
+                <div class="output-actions">
+                  <button type="button" class="btn-outline" id="copy-summary-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    Copy Summary
+                  </button>
+                </div>
+              </div>
+
+              <div class="loading-state" id="loading" hidden>
+                <div class="spinner"></div>
+                <p>Computing ML Pipeline Features & Predictions…</p>
+              </div>
+
+              <div class="error-state" id="error" role="alert" hidden></div>
+            </div>
+
+            <!-- TAB 2: MULTI-MODEL COMPARISON -->
+            <div class="tab-pane" id="tab-compare">
+              <div class="compare-idle" id="compare-idle">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <h3>Compare All 3 Models</h3>
+                <p>Click "Compare All Models" in the form to generate a side-by-side valuation across Linear Regression, Random Forest, and XGBoost.</p>
+              </div>
+
+              <div class="compare-output" id="compare-output" hidden>
+                <div class="avg-price-banner">
+                  <span>Cross-Model Ensemble Average</span>
+                  <strong id="compare-avg-price">₹0.00 lakh</strong>
+                </div>
+
+                <div class="compare-cards-grid" id="compare-cards-grid">
+                  <!-- JS populated -->
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: VALUE DRIVERS / FEATURE IMPORTANCE -->
+            <div class="tab-pane" id="tab-analytics">
+              <div class="analytics-header">
+                <h3>Top Feature Importances</h3>
+                <p>Impact of vehicle specifications on resale valuation model</p>
+              </div>
+
+              <div class="importance-list" id="importance-list">
+                {% if metadata.feature_importances and metadata.best_model in metadata.feature_importances %}
+                  {% for item in metadata.feature_importances[metadata.best_model] %}
+                  <div class="importance-item">
+                    <div class="importance-meta">
+                      <span class="feat-name">{{ item.feature.replace('_', ' ') }}</span>
+                      <span class="feat-val">{{ (item.importance * 100)|round(1) }}%</span>
+                    </div>
+                    <div class="importance-bar-track">
+                      <div class="importance-bar-fill" style="width: {{ (item.importance * 100)|round(1) }}%"></div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <div class="footer-left">
+        <strong>CarWorth AI Engine</strong> · Used Car Valuation Platform
+      </div>
+      <div class="footer-right">
+        <span>Prices in INR Lakhs</span>
+        <span>·</span>
+        <span>Built with Flask, Scikit-Learn & XGBoost</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    window.APP_METADATA = {{ metadata | tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
