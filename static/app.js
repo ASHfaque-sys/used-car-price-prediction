@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('#prediction-form');
   const submitSingleBtn = document.querySelector('#submit-single-btn');
-  const compareAllBtn = document.querySelector('#compare-all-btn');
   const clearFormBtn = document.querySelector('#clear-form-btn');
 
   const tabBtns = document.querySelectorAll('.tab-btn');
@@ -12,8 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const loadingState = document.querySelector('#loading');
   const errorState = document.querySelector('#error');
 
-  const compareIdle = document.querySelector('#compare-idle');
-  const compareOutput = document.querySelector('#compare-output');
 
   // Presets Data Cache
   let presetsData = {};
@@ -141,63 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Compare All Models Handler
-  compareAllBtn.addEventListener('click', async () => {
-    switchTab('tab-compare');
-
-    compareIdle.hidden = true;
-    compareOutput.hidden = true;
-    loadingState.hidden = false;
-    compareAllBtn.disabled = true;
-    errorState.hidden = true;
-
-    try {
-      const payload = getPayload();
-      const response = await fetch('/api/predict-all', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Multi-model prediction failed');
-
-      document.querySelector('#compare-avg-price').textContent = result.formatted_average;
-
-      const grid = document.querySelector('#compare-cards-grid');
-      grid.innerHTML = '';
-
-      Object.keys(result.predictions).forEach(modelKey => {
-        const m = result.predictions[modelKey];
-        const card = document.createElement('div');
-        card.className = `model-comp-card ${m.is_best ? 'is-best' : ''}`;
-        
-        card.innerHTML = `
-          <div class="comp-info">
-            <h4>
-              ${modelKey.replaceAll('_', ' ').toUpperCase()}
-              ${m.is_best ? '<span class="best-tag">BEST</span>' : ''}
-            </h4>
-            <p>Range: ₹${m.range_min} – ₹${m.range_max} L</p>
-          </div>
-          <div class="comp-price">${m.formatted_price}</div>
-        `;
-        grid.appendChild(card);
-      });
-
-      compareOutput.hidden = false;
-
-    } catch (err) {
-      errorState.textContent = err.message;
-      errorState.hidden = false;
-      compareIdle.hidden = false;
-    } finally {
-      loadingState.hidden = true;
-      compareAllBtn.disabled = false;
-    }
-  });
-
   // Copy Valuation Summary Handler
+
   const copyBtn = document.querySelector('#copy-summary-btn');
   if (copyBtn) {
     copyBtn.addEventListener('click', () => {

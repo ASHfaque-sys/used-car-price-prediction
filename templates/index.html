@@ -237,11 +237,6 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 <span>Calculate Resale Price</span>
               </button>
-
-              <button type="button" class="btn-secondary" id="compare-all-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-                <span>Compare All Models</span>
-              </button>
             </div>
           </form>
         </div>
@@ -251,11 +246,7 @@
           <div class="tab-header">
             <button type="button" class="tab-btn active" data-tab="tab-estimate">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              Single Estimate
-            </button>
-            <button type="button" class="tab-btn" data-tab="tab-compare">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-              Multi-Model
+              Valuation Estimate
             </button>
             <button type="button" class="tab-btn" data-tab="tab-analytics">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -264,7 +255,7 @@
           </div>
 
           <div class="tab-content">
-            <!-- TAB 1: SINGLE ESTIMATE -->
+            <!-- TAB 1: VALUATION ESTIMATE -->
             <div class="tab-pane active" id="tab-estimate">
               <div class="result-idle" id="result-idle">
                 <div class="radar-gauge">
@@ -323,25 +314,6 @@
               <div class="error-state" id="error" role="alert" hidden></div>
             </div>
 
-            <!-- TAB 2: MULTI-MODEL COMPARISON -->
-            <div class="tab-pane" id="tab-compare">
-              <div class="compare-idle" id="compare-idle">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                <h3>Compare All 3 Models</h3>
-                <p>Click "Compare All Models" in the form to generate a side-by-side valuation across Linear Regression, Random Forest, and XGBoost.</p>
-              </div>
-
-              <div class="compare-output" id="compare-output" hidden>
-                <div class="avg-price-banner">
-                  <span>Cross-Model Ensemble Average</span>
-                  <strong id="compare-avg-price">₹0.00 lakh</strong>
-                </div>
-
-                <div class="compare-cards-grid" id="compare-cards-grid">
-                  <!-- JS populated -->
-                </div>
-              </div>
-            </div>
 
             <!-- TAB 3: VALUE DRIVERS / FEATURE IMPORTANCE -->
             <div class="tab-pane" id="tab-analytics">
